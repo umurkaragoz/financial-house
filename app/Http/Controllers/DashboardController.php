@@ -2,27 +2,28 @@
 
 namespace App\Http\Controllers;
 
-use App\HttpClients\ReportingApiClient;
-use Carbon\Carbon;
+use App\Http\Requests\GetTransactionsRequest;
+use App\Repositories\ReportingApiRepository;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class DashboardController extends Controller
 {
+    private ReportingApiRepository $reportingApiRepository;
+    public function __construct(ReportingApiRepository $reportingApiRepository)
+    {
+        $this->reportingApiRepository = $reportingApiRepository;
+    }
+
 
     public function index(Request $request): View
     {
-        $client  = new ReportingApiClient();
-
-        $fromDate = Carbon::now()->subYears(10);
-        $toDate = Carbon::now();
-
-        // $response = $client->transactionList($fromDate, $toDate);
-        // $response = $client->clientDetail('1081427-1695032602-3');
-        // dd($response);
-
         return view('dashboard', [
-            'user' => $request->user(),
+            'user' => $request->user()
         ]);
+    }
+
+    public function getTransactions(GetTransactionsRequest $request) {
+        return json_encode($this->reportingApiRepository->getTransactions($request->all()));
     }
 }

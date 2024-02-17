@@ -186,12 +186,9 @@ class ReportingApiClient
     }
 
     /* ----------------------------------------------------------------------------------------------------------------------- transaction List -+- */
-    public function transactionList(Carbon $fromDate = null, Carbon $toDate = null)
+    public function transactionList($filters = [])
     {
-        $this->apiRequest('transaction/list', [
-            'fromDate' => $fromDate->format('Y-m-d'),
-            'toDate' => $toDate->format('Y-m-d'),
-        ], 'POST');
+        $this->apiRequest('transaction/list', $filters, 'POST');
 
 
         $this->data = object_get($this->rawResponse, 'data');
