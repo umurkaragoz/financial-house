@@ -17,9 +17,9 @@ class DashboardController extends Controller
         $fromDate = Carbon::now()->subYears(10);
         $toDate = Carbon::now();
 
-        $response = $client->transactionList($fromDate, $toDate);
-
-        dd($response);
+        // $response = $client->transactionList($fromDate, $toDate);
+        // $response = $client->clientDetail('1081427-1695032602-3');
+        // dd($response);
 
         return view('dashboard', [
             'user' => $request->user(),

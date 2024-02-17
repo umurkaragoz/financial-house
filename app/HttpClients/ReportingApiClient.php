@@ -4,14 +4,13 @@ namespace App\HttpClients;
 
 
 use Carbon\Carbon;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 
 class ReportingApiClient
 {
     private $authEmail = '';
-    
+
     private $authPassword = '';
 
     private $apiUrl = '';
@@ -48,7 +47,7 @@ class ReportingApiClient
     {
         // Token is valid for 10 minutes.
         // We cache it for 8 minutes just to be on the safe side.
-        $token = Cache::remember('reporting-api-token', 4800, function () {
+        $token = Cache::remember('reporting-api-token', 480, function () {
             $this->rawHttpRequest('merchant/user/login', [
                 "email"    => $this->authEmail,
                 "password" => $this->authPassword,
@@ -167,8 +166,21 @@ class ReportingApiClient
         } else {
             $this->success = true;
             $this->message = null;
-            $this->data = object_get($response, 'data');
         }
+
+        return $this;
+    }
+
+    /* --------------------------------------------------------------------------------------------------------------------- transaction Report -+- */
+    public function transactionReport(Carbon $fromDate = null, Carbon $toDate = null)
+    {
+        $this->apiRequest('transactions/report', [
+            'fromDate' => $fromDate->format('Y-m-d'),
+            'toDate' => $toDate->format('Y-m-d'),
+        ], 'POST');
+
+
+        $this->data = object_get($this->rawResponse, 'response');
 
         return $this;
     }
@@ -180,6 +192,37 @@ class ReportingApiClient
             'fromDate' => $fromDate->format('Y-m-d'),
             'toDate' => $toDate->format('Y-m-d'),
         ], 'POST');
+
+
+        $this->data = object_get($this->rawResponse, 'data');
+
+        return $this;
+    }
+
+
+    /* --------------------------------------------------------------------------------------------------------------------- transaction Detail -+- */
+    public function transactionDetail($transactionId)
+    {
+        $this->apiRequest('transaction', [
+            'transactionId' => $transactionId
+        ], 'POST');
+
+
+        $this->data = $this->rawResponse;
+
+        return $this;
+    }
+
+
+    /* -------------------------------------------------------------------------------------------------------------------------- client Detail -+- */
+    public function clientDetail($transactionId)
+    {
+        $this->apiRequest('client', [
+            'transactionId' => $transactionId
+        ], 'POST');
+
+
+        $this->data = object_get($this->rawResponse, 'customerInfo');
 
         return $this;
     }
