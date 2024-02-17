@@ -30,5 +30,10 @@ return [
         'secret' => env('AWS_SECRET_ACCESS_KEY'),
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
+    'reporting-api' => [
+        'url' => env('REPORTING_API_URL'),
+        'email' => env('REPORTING_API_EMAIL'),
+        'password' => env('REPORTING_API_PASSWORD'),
+    ]
 
 ];
