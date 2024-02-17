@@ -171,7 +171,7 @@
             <td class="whitespace-nowrap px-3 py-3 text-sm text-gray-500"></td>
             <td class="whitespace-nowrap px-3 py-3 text-sm text-gray-500"></td>
             <td class="whitespace-nowrap px-3 py-3 text-sm text-gray-500"></td>
-            <td class="whitespace-nowrap px-3 py-3 text-sm text-gray-500"></td>
+            <td class="whitespace-nowrap px-3 py-3 text-sm text-gray-500"><a href="" target="_blank" class="text-blue-500"></a></td>
         </tr>
     </template>
 
@@ -240,13 +240,19 @@
                     for (const transaction of response.data) {
                         const newRow         = tableRowTemplate.content.cloneNode(true)
                         const columns        = newRow.querySelectorAll('td')
+                        
                         columns[0].innerText = transaction?.merchant?.name
                         columns[1].innerText = transaction?.customerInfo?.billingFirstName + ' ' + transaction?.customerInfo?.billingLastName
                         columns[2].innerText = transaction?.customerInfo?.email
                         columns[3].innerText = transaction?.created_at
                         columns[4].innerText = transaction?.transaction?.merchant?.status
                         columns[5].innerText = transaction?.transaction?.merchant?.operation
-                        columns[6].innerText = transaction?.transaction?.merchant?.transactionId
+
+                        const transactionIdLink = columns[6].querySelector('a')
+                        const transactionId = transaction?.transaction?.merchant?.transactionId
+                        transactionIdLink.innerText = transactionId
+                        transactionIdLink.href = window.location.origin + '/dashboard/transaction-detail/' + transactionId
+
                         tableBody.appendChild(newRow)
                     }
                 })

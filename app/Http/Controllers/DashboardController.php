@@ -10,6 +10,7 @@ use Illuminate\View\View;
 class DashboardController extends Controller
 {
     private ReportingApiRepository $reportingApiRepository;
+
     public function __construct(ReportingApiRepository $reportingApiRepository)
     {
         $this->reportingApiRepository = $reportingApiRepository;
@@ -19,11 +20,23 @@ class DashboardController extends Controller
     public function index(Request $request): View
     {
         return view('dashboard', [
-            'user' => $request->user()
+            'user' => $request->user(),
         ]);
     }
 
-    public function getTransactions(GetTransactionsRequest $request) {
+
+    public function transactionDetail(Request $request, $transactionId): View
+    {
+        $transaction = $this->reportingApiRepository->getTransactionDetail($transactionId);
+
+        return view('transaction-detail', [
+            'transaction'   => $transaction,
+            'user'          => $request->user(),
+        ]);
+    }
+
+    public function getTransactions(GetTransactionsRequest $request)
+    {
         return json_encode($this->reportingApiRepository->getTransactions($request->all()));
     }
 }

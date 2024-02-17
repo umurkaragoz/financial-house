@@ -28,4 +28,16 @@ class ReportingApiRepository
 
         return $response;
     }
+
+    public function getTransactionDetail($transactionId)
+    {
+        $response = Cache::remember("reporting-api-transaction-detail-$transactionId", 60, function () use ($transactionId) {
+            $client = new ReportingApiClient();
+            $response = $client->transactionDetail($transactionId);
+
+            return $response->data;
+        });
+
+        return $response;
+    }
 }
