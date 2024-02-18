@@ -17,6 +17,10 @@
   - Help users stay under the API rate limits if there are any.
   - Improve UX by serving cached responses where available.
   - Reduce network traffic between server and the 3rd party API.
+- Homework document suggest adding "Unit Tests", however I have assumed it was meant to say "Automated Tests". Those terms are used ambiguously in the sector.
+  - I think the best suited test type for this kind of application is Feature Tests.
+  - Unit Tests could come in handy more in mathematically heavy methods or methods which handle complex business logic.
+  - Another automated test type which would be suitable for this application is Browser Testing with Laravel Dusk. But I think that falls out of the scope of this demo.
 
 
 
@@ -26,11 +30,11 @@
 - Dashboard
   - [ ] Keep filters after refreshing the page. (Could use browser local storage to store and retrieve the filters.)
   - [ ] Add pagination support for the transaction list.
-  - [ ] Add more columns/data points to the table.
+  - [X] Add more columns/data points to the table.
   - [ ] Send filter options from the server and dynamically create the filters.
   - [ ] Refactor to use ENUMS for filter options.
   - [ ] Use Data Transfer Objects for Reporting API responses.
   - [ ] Use Data Transfer Objects and method parameter type declarations for `ReportingApiRepository` and `ReportingApiClient` methods.
   - [ ] Handle error cases while listing transactions.
-  - [ ] Handle zero length results while listing transactions.
+  - [X] Handle zero length results while listing transactions.
   - [ ] Move inline JavaScript to an external file. Manage client side dependencies with a dependency manager.
