@@ -24,19 +24,28 @@ class DashboardController extends Controller
         ]);
     }
 
+    public function getTransactions(GetTransactionsRequest $request): bool|string
+    {
+        return json_encode($this->reportingApiRepository->getTransactions($request->all()));
+    }
 
     public function transactionDetail(Request $request, $transactionId): View
     {
         $transaction = $this->reportingApiRepository->getTransactionDetail($transactionId);
 
         return view('transaction-detail', [
-            'transaction'   => $transaction,
-            'user'          => $request->user(),
+            'transaction' => $transaction,
+            'user'        => $request->user(),
         ]);
     }
 
-    public function getTransactions(GetTransactionsRequest $request)
+    public function clientDetail(Request $request, $transactionId): View
     {
-        return json_encode($this->reportingApiRepository->getTransactions($request->all()));
+        $client = $this->reportingApiRepository->getClientDetail($transactionId);
+
+        return view('client-detail', [
+            'client' => $client,
+            'user'   => $request->user(),
+        ]);
     }
 }

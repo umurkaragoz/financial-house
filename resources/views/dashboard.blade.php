@@ -13,7 +13,8 @@
                     <div class="sm:flex sm:items-center">
                         <div class="sm:flex-auto">
                             <h1 class="text-base font-semibold leading-6 text-gray-900">Transactions</h1>
-                            <p class="mt-2 text-sm text-gray-700">You can adjust filters to inspect transactions.</p>
+                            <p class="mt-2 text-sm text-gray-700">You may adjust filters to inspect transactions.</p>
+                            <p class="mt-2 text-sm text-gray-700">You can click on customer or transaction fields to see their details.</p>
                         </div>
                     </div>
 
@@ -142,18 +143,21 @@
                                 <table id="transactions-table" class="hover:table-auto min-w-full divide-y divide-gray-300">
                                     <thead>
                                     <tr>
+                                        <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Transaction ID</th>
                                         <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-3">Merchant</th>
                                         <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Customer</th>
                                         <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Customer Email</th>
-                                        <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Transaction Time</th>
                                         <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Status</th>
                                         <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Operation</th>
-                                        <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Transaction ID</th>
+                                        <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Payment Method</th>
+                                        <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Transaction Time</th>
                                     </tr>
                                     </thead>
                                     <tbody class="bg-white">
                                     </tbody>
                                 </table>
+                                <p id="transactions-loading-txt" class="hidden my-4 text-center text-gray-700">Loading transactions...</p>
+                                <p id="transactions-empty-txt" class="hidden my-4 text-center text-gray-700">No transactions found matching these filters.</p>
                             </div>
                         </div>
                     </div>
@@ -165,13 +169,14 @@
 
     <template id="table-row">
         <tr class="even:bg-gray-50">
-            <td class="whitespace-nowrap px-3 py-3 text-sm font-medium text-gray-900 sm:pl-3"></td>
-            <td class="whitespace-nowrap px-3 py-3 text-sm text-gray-500"></td>
-            <td class="whitespace-nowrap px-3 py-3 text-sm text-gray-500"></td>
-            <td class="whitespace-nowrap px-3 py-3 text-sm text-gray-500"></td>
-            <td class="whitespace-nowrap px-3 py-3 text-sm text-gray-500"></td>
+            <td class="whitespace-nowrap px-3 py-3 text-sm text-gray-500"><a href="" target="_blank" class="text-blue-500"></a></td>
             <td class="whitespace-nowrap px-3 py-3 text-sm text-gray-500"></td>
             <td class="whitespace-nowrap px-3 py-3 text-sm text-gray-500"><a href="" target="_blank" class="text-blue-500"></a></td>
+            <td class="whitespace-nowrap px-3 py-3 text-sm text-gray-500"></td>
+            <td class="whitespace-nowrap px-3 py-3 text-sm text-gray-500"></td>
+            <td class="whitespace-nowrap px-3 py-3 text-sm text-gray-500"></td>
+            <td class="whitespace-nowrap px-3 py-3 text-sm text-gray-500"></td>
+            <td class="whitespace-nowrap px-3 py-3 text-sm text-gray-500"></td>
         </tr>
     </template>
 
@@ -180,8 +185,12 @@
         <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 
         <script>
+            let transactionsLoadingTxt, transactionsEmptyTxt
+
             document.addEventListener('DOMContentLoaded', () => {
                 const filterBtn = document.querySelector('#filter-btn')
+                transactionsLoadingTxt = document.querySelector('#transactions-loading-txt')
+                transactionsEmptyTxt = document.querySelector('#transactions-empty-txt')
 
                 filterBtn.addEventListener('click', () => {
                     getTransactions()
@@ -227,31 +236,43 @@
                 const tableBody        = table.querySelector('tbody')
                 const tableRowTemplate = document.querySelector('#table-row')
 
+                transactionsEmptyTxt.classList.add('hidden')
+                transactionsLoadingTxt.classList.remove('hidden')
+
                 tableBody.innerHTML = ''
 
                 axios({
                     method: 'get',
                     url   : getFilteredUrl(),
                 }).then(response => {
-                    if(!response.data) {
+                    transactionsLoadingTxt.classList.add('hidden')
+
+                    if(!response.data || !response.data.length) {
+                        transactionsEmptyTxt.classList.remove('hidden')
                         return;
                     }
 
                     for (const transaction of response.data) {
                         const newRow         = tableRowTemplate.content.cloneNode(true)
                         const columns        = newRow.querySelectorAll('td')
-                        
-                        columns[0].innerText = transaction?.merchant?.name
-                        columns[1].innerText = transaction?.customerInfo?.billingFirstName + ' ' + transaction?.customerInfo?.billingLastName
-                        columns[2].innerText = transaction?.customerInfo?.email
-                        columns[3].innerText = transaction?.created_at
-                        columns[4].innerText = transaction?.transaction?.merchant?.status
-                        columns[5].innerText = transaction?.transaction?.merchant?.operation
-
-                        const transactionIdLink = columns[6].querySelector('a')
                         const transactionId = transaction?.transaction?.merchant?.transactionId
+
+
+                        const transactionIdLink = columns[0].querySelector('a')
                         transactionIdLink.innerText = transactionId
                         transactionIdLink.href = window.location.origin + '/dashboard/transaction-detail/' + transactionId
+                        
+                        columns[1].innerText = transaction?.merchant?.name
+
+                        const customerInfoLink = columns[2].querySelector('a')
+                        customerInfoLink.innerText = transaction?.customerInfo?.billingFirstName + ' ' + transaction?.customerInfo?.billingLastName
+                        customerInfoLink.href = window.location.origin + '/dashboard/client-detail/' + transactionId
+
+                        columns[3].innerText = transaction?.customerInfo?.email
+                        columns[4].innerText = transaction?.transaction?.merchant?.status
+                        columns[5].innerText = transaction?.transaction?.merchant?.operation
+                        columns[6].innerText = transaction?.acquirer?.type
+                        columns[7].innerText = transaction?.created_at
 
                         tableBody.appendChild(newRow)
                     }

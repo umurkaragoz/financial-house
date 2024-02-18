@@ -29,6 +29,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/dashboard/get-transactions', [DashboardController::class, 'getTransactions']);
     Route::get('/dashboard/transaction-detail/{id}', [DashboardController::class, 'transactionDetail']);
+    Route::get('/dashboard/client-detail/{id}', [DashboardController::class, 'clientDetail']);
 });
 
 require __DIR__.'/auth.php';
