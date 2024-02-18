@@ -1,6 +1,20 @@
 # Financial House Homework Sample Project
 
 
+## Deployed Demo
+
+A live demo of this project is deployed to [https://financial-house.umurkaragoz.com](https://financial-house.umurkaragoz.com).
+
+You can go to the link and create a new account to access to the dashboard.
+
+Project is deployed to a DigitalOcean droplet VPS.
+Droplet is running Ubuntu with Apache server.
+I have manually configured the website config files and relevant apache settings.
+I have used PhpStorm's Remote Host synchronization feature to keep the files on the server up to date throughout the development process.
+
+Heroku or similar platforms could have been great alternatives for deployment. But I have opted for a VPS server for simplicity’s sake.
+I have already had a VPS configured and running, therefore preferred to utilize that instead.  
+
 ## Developer Log
 
 *In this section, I will log the thought process behind the architectural decisions I've made during the development of this repository.*
